@@ -9,12 +9,15 @@ module.exports = {
 
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
-    if (!prompt) return sendMessage(senderId, { text: "Usage: gpt4 <question>" }, pageAccessToken);
+    if (!prompt) {
+      return sendMessage(senderId, { text: "Usage: gpt4 <question>" }, pageAccessToken);
+    }
 
     try {
-      const { data: { response } } = await axios.get(`https://api.kenliejugarap.com/blackbox-gpt4o/?text=${encodeURIComponent(prompt)}`);
-      sendMessage(senderId, { text: response }, pageAccessToken);
-    } catch {
+      const url = `https://api.zetsu.xyz/api/blackbox?prompt=${encodeURIComponent(prompt)}&uid=6`;
+      const { data } = await axios.get(url);
+      sendMessage(senderId, { text: data.response || data }, pageAccessToken);
+    } catch (error) {
       sendMessage(senderId, { text: 'There was an error generating the content. Please try again later.' }, pageAccessToken);
     }
   }
